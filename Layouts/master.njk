@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    {% render_snippet "meta-tags.njk" %}
+    
+    <link href="{{ 'built.css' | assetUrl }}" rel="stylesheet"/>
+    <link href="{{ 'custom.css' | assetUrl }}" rel="stylesheet"/>
+
+    <style id="theme-styles">
+      :root {
+        --cl-accent: {{ global.properties.accent_color | hex_to_rgb }};
+        --cl-background: {{ global.properties.background_color | hex_to_rgb }};
+        --cl-card: {{ global.properties.card_color | hex_to_rgb }};
+        --cl-t-primary: {{ (global.properties.text_primary_color if global.properties.text_primary_color else '#ffffff') | hex_to_rgb }};
+        --cl-t-accent: {{ (global.properties.text_accent_color if global.properties.text_accent_color else '#ffffff') | hex_to_rgb }};
+      }
+
+      body {
+        font-family: '{{ (global.properties.font if global.properties.font else 'Play') }}', sans-serif;
+      }
+    </style>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family={{ (global.properties.font if global.properties.font else 'Play') | replace(" ", "+") }}:wght@300;400;500;600;700&display=swap" rel="stylesheet" id="theme-font">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet" integrity="sha256-5uKiXEwbaQh9cgd2/5Vp6WmMnsUr3VZZw0a8rKnOKNU=" crossorigin="anonymous" />
+    <link href="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/styles/choices.min.css" rel="stylesheet" integrity="sha256-gS3HxgWFFFqEo0wQoALebu5XlWdYr3gqd4/Tk5wt8Ig=" crossorigin="anonymous" />
+    <link href="https://cdn.jsdelivr.net/npm/lite-youtube-embed@0.3.3/src/lite-yt-embed.css" rel="stylesheet" integrity="sha256-qwd4FE0YEnXtN1D9SlLRzgZ35aJTclA5jg1poUQA3dE=" crossorigin="anonymous" />
+  </head>
+  <body style="background-color: rgb({{ global.properties.background_color | hex_to_rgb }});">
+    {% if shop.background_image_url %}
+      <div class="fixed inset-0 z-[-1] bg-center bg-cover pointer-events-none" style="background-image: url({{ shop.background_image_url }});"></div>
+    {% endif %}
+
+    <div id="particles-js" class="fixed inset-0 z-0 size-full"></div>
+    
+    <div id="app">
+      {% render_component "announcement" %}
+      <div class="flex flex-col justify-between max-w-[85rem] min-h-screen mx-auto p-4 relative md:p-6 lg:p-8">
+        <div>
+          {% render_component "navbar" %}
+          {{ templateContent | safe }}
+        </div>
+        {% render_component "footer" %}
+      </div>
+    </div>
+
+    {% if isBuilder %}
+      {% render_snippet "script-builder.njk" %}
+    {% endif %}
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"
+      integrity="sha256-aJ9ROXjRHWn00zeU9ylsmlhqLlXeebtEfN28P0dPnwc="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"
+      integrity="sha256-FZsW7H2V5X9TGinSjjwYJ419Xka27I8XPDmWryGlWtw="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/scripts/choices.min.js"
+      integrity="sha256-P+JgcxEeZtxwYS1+TAAuusKFM646SB8Oodk0TYu9zuo="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lite-youtube-embed@0.3.3/src/lite-yt-embed.js"
+      integrity="sha256-t8Thbv2D6x0AC5rMk+Ydz589Zq4lp8ZC4iVfNNdxs5U="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.js"
+      integrity="sha256-icjghcPaibMf1jv4gQIGi5MeWNHem2SispcorCiCfSg="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="{{ 'script.js' | assetUrl }}"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      particlesJS({
+        "particles": {
+          "number": {
+            "value": 50,
+            "density": {
+              "enable": true,
+              "value_area": 800
+            }
+          },
+          "color": {
+            "value": "{{ global.properties.accent_color }}"
+          },
+          "opacity": {
+            "value": 0.5,
+            "random": false,
+            "anim": {
+              "enable": false,
+              "speed": 1,
+              "opacity_min": 0.1,
+              "sync": false
+            }
+          },
+          "size": {
+            "value": 3,
+            "random": true,
+            "anim": {
+              "enable": false,
+              "speed": 40,
+              "size_min": 0.1,
+              "sync": false
+            }
+          },
+          "line_linked": {
+            "enable": true,
+            "distance": 150,
+            "color": "{{ global.properties.accent_color }}",
+            "opacity": 0.4,
+            "width": 1
+          },
+          "move": {
+            "enable": true,
+            "speed": 1,
+            "direction": "none",
+            "random": false,
+            "straight": false,
+            "out_mode": "out",
+            "bounce": false,
+            "attract": {
+              "enable": false,
+              "rotateX": 600,
+              "rotateY": 1200
+            }
+          }
+        },
+        "interactivity": {
+          "detect_on": "canvas",
+          "events": {
+            "onhover": {
+              "enable": false,
+              "mode": "repulse"
+            },
+            "onclick": {
+              "enable": false,
+              "mode": "push"
+            },
+            "resize": true  
+          }
+        },
+        "retina_detect": true
+      });
+    </script>
+
+    {% if global.properties.snow %}
+      <script src="/assets/js/snow.js"></script>
+    {% endif %}
+
+    {% render_snippet "script-integrations.njk" %}
+  </body>
+</html>

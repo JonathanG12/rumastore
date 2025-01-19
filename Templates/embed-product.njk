@@ -1,0 +1,100 @@
+<div x-data="productForm">
+  <div class="p-4">
+    <div class="flex items-center justify-between gap-8 p-6 border border-white/5 bg-white/[0.025] backdrop-blur-2xl mb-4">
+      <div class="flex items-start gap-4 truncate">
+        <div class="max-w-24 aspect-video">
+          {% if product.image_urls|length > 0 %}
+          <img src="{{ product.image_urls[0] }}" class="size-full object-scale-down" />
+          {% elif product.image_url %}
+          <img src="{{ product.image_url }}" class="size-full object-scale-down" />
+          {% else %}
+          <div class="flex items-center justify-center">
+            <svg class="size-12 text-accent-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" >
+              <path fill="currentColor" d="m222.72 67.91l-88-48.18a13.9 13.9 0 0 0-13.44 0l-88 48.18A14 14 0 0 0 26 80.18v95.64a14 14 0 0 0 7.28 12.27l88 48.18a13.92 13.92 0 0 0 13.44 0l88-48.18a14 14 0 0 0 7.28-12.27V80.18a14 14 0 0 0-7.28-12.27ZM127 30.25a2 2 0 0 1 1.92 0L212.51 76l-33.94 18.57l-84.52-46.26ZM122 223l-83-45.43a2 2 0 0 1-1-1.75V86.66l84 46ZM43.49 76l38.07-20.85l84.51 46.26L128 122.24ZM218 175.82a2 2 0 0 1-1 1.75L134 223v-90.36l36-19.71V152a6 6 0 0 0 12 0v-45.63l36-19.71Z" />
+            </svg>
+          </div>
+          {% endif %}
+        </div>
+        <div class="flex-1 truncate">
+          <h1 class="text-lg font-bold text-t-primary truncate">
+            {{ product.name }}
+          </h1>
+          <div class="text-sm text-t-primary">
+            {% if product.type == 'single' %}
+            <span>
+              <span x-text="formatPrice(totalPrice)"></span>
+            </span>
+            {% elif product.type == 'variant' %}
+            <template x-if="activeVariant in product.variants">
+              <span>
+                <span x-text="formatPrice(totalPrice)"></span>
+              </span>
+            </template>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div>
+        {% if product.type == 'single' %}
+        <span x-show="product.stock > 0 || product.stock === -1" class="flex items-center gap-2 text-t-primary">
+          <span class="text-green-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="currentColor" viewBox="0 0 256 256"><path d="M224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Z"></path><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Z" opacity="0.2"></path></svg>
+          </span>
+          <span x-show="product.stock === -1" class="inline-flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="text-accent-500 size-5" fill="currentColor" viewBox="0 0 256 256"><path d="M248,128a56,56,0,0,1-95.6,39.6l-.33-.35L92.12,99.55a40,40,0,1,0,0,56.9l8.52-9.62a8,8,0,1,1,12,10.61l-8.69,9.81-.33.35a56,56,0,1,1,0-79.2l.33.35,59.95,67.7a40,40,0,1,0,0-56.9l-8.52,9.62a8,8,0,1,1-12-10.61l8.69-9.81.33-.35A56,56,0,0,1,248,128Z"></path></svg>
+            in stock
+          </span>
+          <span x-show="product.stock > 0 && !product.hide_stock_count" x-text="product.stock + ' In Stock'"></span>
+          <span x-show="product.stock > 0 && product.hide_stock_count">In Stock</span>
+        </span>
+        <span x-show="product.stock === 0" class="flex items-center gap-2 text-t-primary">
+          <span class="text-red-500">
+          <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="currentColor" viewBox="0 0 256 256"><path d="M224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Z"></path><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Z" opacity="0.2"></path></svg>
+          </span>
+          <span>
+            Out of Stock
+          </span>
+        </span>
+        {% elif product.type == 'variant' %}
+        <div x-show="activeVariant in product.variants">
+          <span x-show="product.variants[activeVariant].stock > 0 || product.variants[activeVariant].stock === -1" class="flex items-center gap-2 text-t-primary">
+            <span class="text-green-500">
+              <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="currentColor" viewBox="0 0 256 256"><path d="M224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Z"></path><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Z" opacity="0.2"></path></svg>
+            </span>
+            <span x-show="product.variants[activeVariant].stock === -1" class="inline-flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="text-accent-500 size-5" fill="currentColor" viewBox="0 0 256 256"><path d="M248,128a56,56,0,0,1-95.6,39.6l-.33-.35L92.12,99.55a40,40,0,1,0,0,56.9l8.52-9.62a8,8,0,1,1,12,10.61l-8.69,9.81-.33.35a56,56,0,1,1,0-79.2l.33.35,59.95,67.7a40,40,0,1,0,0-56.9l-8.52,9.62a8,8,0,1,1-12-10.61l8.69-9.81.33-.35A56,56,0,0,1,248,128Z"></path></svg>
+              in stock
+            </span>
+            <span x-show="product.variants[activeVariant].stock > 0 && !product.hide_stock_count" x-text="product.variants[activeVariant].stock + ' In Stock'"></span>
+            <span x-show="product.variants[activeVariant].stock > 0 && product.hide_stock_count">In Stock</span>
+          </span>
+          <span x-show="product.variants[activeVariant].stock === 0" class="flex items-center gap-2 text-t-primary">
+            <span class="text-red-500">
+              <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="currentColor" viewBox="0 0 256 256"><path d="M224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Z"></path><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Z" opacity="0.2"></path></svg>
+            </span>
+            <span>
+              Out of Stock
+            </span>
+          </span>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% render_snippet "product-form.njk", product=product, coupons=coupons, is_embed=1 %}
+
+    {% if not shop.is_subscribed %}
+    <div class="-mt-4">
+      <p class="flex justify-center items-center gap-2 text-white/75">
+          Powered By <a href="https://sellauth.com" target="_blank" class="text-accent-500">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 439.3 91.2" class="h-3"><path d=" M 47.824 67.631 L 47.824 67.631 L 47.824 67.631 Q 47.824 62.651 44.308 59.985 L 44.308 59.985 L 44.308 59.985 Q 40.792 57.319 31.652 54.36 L 31.652 54.36 L 31.652 54.36 Q 22.511 51.401 17.179 48.53 L 17.179 48.53 L 17.179 48.53 Q 2.648 40.678 2.648 27.377 L 2.648 27.377 L 2.648 27.377 Q 2.648 20.463 6.544 15.043 L 6.544 15.043 L 6.544 15.043 Q 10.441 9.623 17.736 6.577 L 17.736 6.577 L 17.736 6.577 Q 25.031 3.53 34.113 3.53 L 34.113 3.53 L 34.113 3.53 Q 43.253 3.53 50.402 6.84 L 50.402 6.84 L 50.402 6.84 Q 57.55 10.151 61.505 16.186 L 61.505 16.186 L 61.505 16.186 Q 65.46 22.221 65.46 29.897 L 65.46 29.897 L 47.882 29.897 L 47.882 29.897 Q 47.882 24.038 44.191 20.786 L 44.191 20.786 L 44.191 20.786 Q 40.499 17.534 33.82 17.534 L 33.82 17.534 L 33.82 17.534 Q 27.374 17.534 23.8 20.258 L 23.8 20.258 L 23.8 20.258 Q 20.226 22.983 20.226 27.436 L 20.226 27.436 L 20.226 27.436 Q 20.226 31.596 24.415 34.409 L 24.415 34.409 L 24.415 34.409 Q 28.605 37.221 36.749 39.682 L 36.749 39.682 L 36.749 39.682 Q 51.749 44.194 58.605 50.873 L 58.605 50.873 L 58.605 50.873 Q 65.46 57.553 65.46 67.514 L 65.46 67.514 L 65.46 67.514 Q 65.46 78.588 57.081 84.887 L 57.081 84.887 L 57.081 84.887 Q 48.703 91.186 34.523 91.186 L 34.523 91.186 L 34.523 91.186 Q 24.679 91.186 16.593 87.582 L 16.593 87.582 L 16.593 87.582 Q 8.507 83.979 4.259 77.709 L 4.259 77.709 L 4.259 77.709 Q 0.011 71.44 0.011 63.178 L 0.011 63.178 L 17.648 63.178 L 17.648 63.178 Q 17.648 77.299 34.523 77.299 L 34.523 77.299 L 34.523 77.299 Q 40.792 77.299 44.308 74.75 L 44.308 74.75 L 44.308 74.75 Q 47.824 72.202 47.824 67.631 Z  M 105.421 91.186 L 105.421 91.186 L 105.421 91.186 Q 91.476 91.186 82.716 82.631 L 82.716 82.631 L 82.716 82.631 Q 73.956 74.077 73.956 59.838 L 73.956 59.838 L 73.956 58.198 L 73.956 58.198 Q 73.956 48.647 77.648 41.118 L 77.648 41.118 L 77.648 41.118 Q 81.339 33.588 88.107 29.516 L 88.107 29.516 L 88.107 29.516 Q 94.874 25.444 103.546 25.444 L 103.546 25.444 L 103.546 25.444 Q 116.554 25.444 124.025 33.647 L 124.025 33.647 L 124.025 33.647 Q 131.496 41.85 131.496 56.909 L 131.496 56.909 L 131.496 63.823 L 91.124 63.823 L 91.124 63.823 Q 91.945 70.034 96.076 73.784 L 96.076 73.784 L 96.076 73.784 Q 100.206 77.534 106.535 77.534 L 106.535 77.534 L 106.535 77.534 Q 116.32 77.534 121.828 70.444 L 121.828 70.444 L 130.148 79.76 L 130.148 79.76 Q 126.339 85.151 119.835 88.168 L 119.835 88.168 L 119.835 88.168 Q 113.331 91.186 105.421 91.186 Z  M 103.488 39.155 L 103.488 39.155 L 103.488 39.155 Q 98.449 39.155 95.314 42.553 L 95.314 42.553 L 95.314 42.553 Q 92.179 45.952 91.3 52.28 L 91.3 52.28 L 114.855 52.28 L 114.855 50.932 L 114.855 50.932 Q 114.738 45.307 111.808 42.231 L 111.808 42.231 L 111.808 42.231 Q 108.878 39.155 103.488 39.155 Z  M 158.976 0.014 L 158.976 90.014 L 141.984 90.014 L 141.984 0.014 L 158.976 0.014 Z  M 190.792 0.014 L 190.792 90.014 L 173.8 90.014 L 173.8 0.014 L 190.792 0.014 Z " fill-rule="evenodd" fill="rgb(255,255,255)"/><path d=" M 263.39 90.014 L 255.246 67.748 L 219.504 67.748 L 211.476 90.014 L 199.875 90.014 L 232.453 4.702 L 242.297 4.702 L 274.933 90.014 L 263.39 90.014 Z  M 237.375 18.588 L 222.902 58.491 L 251.906 58.491 L 237.375 18.588 Z  M 323.449 90.014 L 323.215 83.745 L 323.215 83.745 Q 316.887 91.186 304.64 91.186 L 304.64 91.186 L 304.64 91.186 Q 294.504 91.186 289.201 85.297 L 289.201 85.297 L 289.201 85.297 Q 283.898 79.409 283.84 67.866 L 283.84 67.866 L 283.84 26.616 L 294.679 26.616 L 294.679 67.573 L 294.679 67.573 Q 294.679 81.987 306.398 81.987 L 306.398 81.987 L 306.398 81.987 Q 318.82 81.987 322.922 72.729 L 322.922 72.729 L 322.922 26.616 L 333.762 26.616 L 333.762 90.014 L 323.449 90.014 Z  M 354.094 11.264 L 364.933 11.264 L 364.933 26.616 L 376.769 26.616 L 376.769 34.995 L 364.933 34.995 L 364.933 74.311 L 364.933 74.311 Q 364.933 78.12 366.515 80.024 L 366.515 80.024 L 366.515 80.024 Q 368.097 81.928 371.906 81.928 L 371.906 81.928 L 371.906 81.928 Q 373.781 81.928 377.062 81.225 L 377.062 81.225 L 377.062 90.014 L 377.062 90.014 Q 372.785 91.186 368.742 91.186 L 368.742 91.186 L 368.742 91.186 Q 361.476 91.186 357.785 86.791 L 357.785 86.791 L 357.785 86.791 Q 354.094 82.397 354.094 74.311 L 354.094 74.311 L 354.094 34.995 L 342.551 34.995 L 342.551 26.616 L 354.094 26.616 L 354.094 11.264 Z  M 400.265 0.014 L 400.265 34.291 L 400.265 34.291 Q 407.472 25.444 419.015 25.444 L 419.015 25.444 L 419.015 25.444 Q 439.113 25.444 439.289 48.12 L 439.289 48.12 L 439.289 90.014 L 428.449 90.014 L 428.449 48.061 L 428.449 48.061 Q 428.39 41.205 425.314 37.924 L 425.314 37.924 L 425.314 37.924 Q 422.238 34.643 415.734 34.643 L 415.734 34.643 L 415.734 34.643 Q 410.461 34.643 406.476 37.455 L 406.476 37.455 L 406.476 37.455 Q 402.492 40.268 400.265 44.838 L 400.265 44.838 L 400.265 90.014 L 389.426 90.014 L 389.426 0.014 L 400.265 0.014 Z " fill="rgb(101,113,255)"/></svg>
+        </a>
+      </p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% if shop.recaptcha_key %}
+<script src="https://www.google.com/recaptcha/api.js?render={{ shop.recaptcha_key }}"></script>
+{% endif %}

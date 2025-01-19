@@ -1,0 +1,39 @@
+<section id="{{ componentId }}" class="component" data-component-id="{{ componentId }}">
+  <div class="py-6 lg:py-8">
+    {% if properties.title %}
+      <div class="flex items-center justify-center mb-4 md:mb-6 lg:mb-8">
+        <div class="inline-block">
+          <h1 class="text-t-primary text-2xl text-center font-bold md:text-3xl lg:text-4xl">
+            {{ properties.title | renderString }}
+          </h1>
+          <hr class="w-full border-accent-500 mt-1 md:border-2 md:mt-1.5 lg:mt-2 mx-auto">
+        </div>
+      </div>
+    {% endif %}
+
+    {% if feedbacks|length > 0 %}
+      <div class="w-full grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+        {% for feedback in feedbacks.slice(0, (properties.amount if properties.amount else feedbacks|length)) %}
+          {% render_snippet "feedback-card.njk", feedback=feedback %}
+        {% endfor %}
+      </div>
+      {% if feedbacksPaginator %}
+        {% render_snippet "pagination.njk", paginator=feedbacksPaginator %}
+      {% elif feedbacks|length > properties.amount %}
+        <div class="flex justify-center mt-8">
+          <a href="{{ 'feedback' | shopUrl }}" class="text-accent-500 hover:underline">
+            View All Reviews
+          </a>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="text-t-primary/50">
+        {% if templateName == 'product' %}
+          No reviews about this product yet.
+        {% else %}
+          No reviews yet.
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</section>

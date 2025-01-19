@@ -1,0 +1,39 @@
+{% set title = shop.name %}
+{% set description = shop.description %}
+{% set image = shop.image_url %}
+{% set favicon = shop.favicon_url %}
+
+{% if templateName == 'product' %}
+    {% set title = product.name ~ ' - ' ~ shop.name %}
+    {% set description = product.description | striptags %}
+    {% if product.image_urls|length > 0 %}
+        {% set image = product.image_urls[0] %}
+    {% elif product.image_url %}
+        {% set image = product.image_url %}
+    {% endif %}
+{% elif templateName == 'feedback' %}
+    {% set title = 'Feedbacks - ' ~ shop.name %}
+    {% set description = 'Browse ' ~ (feedbacks | length) ~ ' feedbacks from our customers' %}
+{% elif templateName == 'terms' %}
+    {% set title = 'Terms & Conditions - ' ~ shop.name %}
+    {% set description = 'Read our terms and conditions' %}
+{% endif %}
+
+<title>{{ title }}</title>
+<meta name="description" content="{{ description }}">
+{% if favicon %}
+<link rel="icon" type="image/png" href="{{ favicon }}">
+{% endif %}
+<meta property="og:title" content="{{ title }}">
+<meta property="og:description" content="{{ description }}">
+{% if image %}
+<meta property="og:image" content="{{ image }}">
+{% endif %}
+<meta name="twitter:title" content="{{ title }}">
+<meta name="twitter:description" content="{{ description }}">
+{% if templateName == 'product' %}
+<meta name="twitter:card" content="summary_large_image">
+{% else %}
+<meta name="twitter:card" content="summary">
+{% endif %}
+<meta name="theme-color" content="{{ '' | themeColor }}" />
